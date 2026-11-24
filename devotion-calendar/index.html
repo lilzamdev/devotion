@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mt. Calvary Devotion Calendar</title>
+<meta name="description" content="Daily devotion calendar for the youth of Mt. Calvary Missionary Baptist Church.">
+<meta name="theme-color" content="#9F714F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%239F714F'/%3E%3Ccircle cx='20' cy='27' r='9' fill='%23C0A88F'/%3E%3Crect x='17.6' y='6' width='4.8' height='27' rx='2' fill='%23fff'/%3E%3Crect x='11' y='12' width='18' height='4.4' rx='2' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brown:#9F714F; --brown-d:#7A5236; --sand:#C0A88F; --cream:#EBE7DC; --paper:#F5F2EB; --white:#FFFFFF;
+  --ink:#3B2A1E; --ink2:#85705F; --line:#E4DCCD;
+  --ok:#6E8B5B; --ok-bg:#E6EDDD; --wait:#C08A3E; --wait-bg:#F6EBD5; --miss:#B4614A; --miss-bg:#F5E3DC;
+  --r:24px; --shadow:0 1px 2px rgba(59,42,30,.04),0 12px 32px -12px rgba(59,42,30,.18);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased;line-height:1.45}
+body.lock{overflow:hidden}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;margin:0;font-weight:600;letter-spacing:-.01em}
+button{font:inherit;cursor:pointer;color:inherit}
+.wrap{max-width:1160px;margin:0 auto;padding:0 18px}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:14px;background:var(--brown);display:grid;place-items:center;box-shadow:var(--shadow)}
+.brand b{display:block;font-family:'Fraunces',serif;font-size:19px;line-height:1.1}
+.brand small{color:var(--ink2);font-size:12.5px;font-weight:500}
+.who-me{display:flex;align-items:center;gap:8px;background:var(--white);padding:5px 14px 5px 5px;border-radius:999px;font-weight:700;font-size:14px;box-shadow:var(--shadow)}
+.top-r{display:flex;align-items:center;gap:8px}
+.view-btn{border:none;white-space:nowrap;background:var(--white);color:var(--brown-d);font-weight:700;font-size:13px;padding:7px 14px;border-radius:999px;box-shadow:var(--shadow);transition:transform .2s var(--ease),background .2s}
+.view-btn:hover{transform:translateY(-2px)}
+.view-btn.on{background:var(--brown);color:#fff}
+@media (max-width:560px){.top-r .host-chip,.top-r .who-me{display:none}}
+.host-chip{white-space:nowrap;background:var(--ink);color:var(--cream);padding:7px 14px;border-radius:999px;font-weight:700;font-size:13px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-radius:32px;background:linear-gradient(140deg,#A97A57 0%,var(--brown) 45%,var(--brown-d) 100%);color:var(--white);padding:28px;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;box-shadow:var(--shadow)}
+.blob{position:absolute;border-radius:50%;filter:blur(2px);opacity:.35;pointer-events:none}
+.blob.a{width:280px;height:280px;background:var(--sand);top:-120px;right:8%;animation:float 14s ease-in-out infinite}
+.blob.b{width:180px;height:180px;background:var(--cream);bottom:-90px;left:30%;opacity:.18;animation:float 18s ease-in-out infinite reverse}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-24px,18px) scale(1.08)}}
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .trk{stroke:rgba(255,255,255,.2)}
+.ring .val{stroke:var(--white);stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease)}
+.ring-in{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring-in .n{font-family:'Fraunces',serif;font-size:44px;font-weight:700;line-height:1}
+.ring-in .l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;font-weight:700}
+.ring-flame{position:absolute;top:-6px;right:-2px;font-size:30px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2))}
+.lit .ring-flame{animation:flick 1.5s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes flick{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.14) rotate(4deg)}}
+.hero-mid{position:relative;z-index:1}
+.hero-mid h1{font-size:clamp(26px,3.4vw,36px);line-height:1.1}
+.hero-mid p{margin:6px 0 16px;opacity:.9;font-size:16px}
+.next{font-size:13px;opacity:.85;margin-top:12px}
+.verse{position:relative;z-index:1;max-width:280px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:16px 18px;backdrop-filter:blur(6px)}
+.verse q{font-family:'Fraunces',serif;font-style:italic;font-size:15.5px;line-height:1.4;quotes:"“" "”"}
+.verse span{display:block;margin-top:8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.8;font-weight:700}
+@media (max-width:900px){.hero{grid-template-columns:auto 1fr}.verse{grid-column:1/-1;max-width:none}}
+@media (max-width:560px){.hero{grid-template-columns:1fr;text-align:center;justify-items:center;padding:24px 20px}.ring{width:120px;height:120px}}
+
+/* chips */
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.chip{background:var(--white);border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:transform .25s var(--ease)}
+.chip:hover{transform:translateY(-3px)}
+.chip .i{width:40px;height:40px;border-radius:13px;background:var(--paper);display:grid;place-items:center;font-size:20px;flex:none}
+.chip b{display:block;font-family:'Fraunces',serif;font-size:24px;line-height:1}
+.chip small{color:var(--ink2);font-size:12.5px;font-weight:500}
+@media (max-width:760px){.chips{grid-template-columns:repeat(2,1fr)}}
+
+/* tabs */
+.tabs{display:inline-flex;gap:4px;background:var(--white);padding:5px;border-radius:16px;box-shadow:var(--shadow);margin:14px 0 0;position:relative}
+.tab{border:none;background:transparent;padding:9px 16px;border-radius:12px;font-weight:700;color:var(--ink2);transition:background .25s,color .25s}
+.tab.on{background:var(--brown);color:var(--white)}
+.tab .cnt{display:inline-grid;place-items:center;min-width:20px;height:20px;background:var(--wait);color:#fff;border-radius:999px;margin-left:6px;font-size:11.5px;padding:0 6px}
+
+/* layout */
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start;margin:14px 0 48px}
+.side{display:flex;flex-direction:column;gap:14px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:20px}
+.card h3{font-size:18px;margin-bottom:12px}
+
+/* calendar */
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.cal-head h2{font-size:26px}
+.cal-head small{display:block;color:var(--ink2);font-size:13px;font-weight:500;margin-top:2px}
+.nav{display:flex;gap:6px}
+.nbtn{border:none;background:var(--paper);border-radius:12px;height:38px;min-width:38px;padding:0 12px;font-weight:700;transition:background .2s,transform .2s}
+.nbtn:hover{background:var(--cream)}
+.nbtn:active{transform:scale(.94)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.dow{text-align:center;font-weight:700;font-size:11.5px;color:var(--ink2);letter-spacing:.1em;text-transform:uppercase;padding-bottom:4px}
+.day{position:relative;aspect-ratio:1/1;min-height:64px;border-radius:16px;border:none;background:var(--paper);padding:8px;text-align:left;display:flex;flex-direction:column;transition:transform .25s var(--ease),box-shadow .25s,background .25s}
+.day:hover{transform:translateY(-3px);box-shadow:var(--shadow);background:var(--white)}
+.day:focus-visible{outline:2px solid var(--brown);outline-offset:2px}
+.num{font-weight:700;font-size:14px;width:26px;height:26px;display:grid;place-items:center;border-radius:999px}
+.ico{position:absolute;top:8px;right:8px;width:22px;height:22px}
+.ico svg,.ico img{width:100%;height:100%;display:block;object-fit:contain}
+.day.today{background:var(--white);box-shadow:inset 0 0 0 2px var(--brown)}
+.day.today .num{background:var(--brown);color:#fff}
+.day.today.todo::after{content:"";position:absolute;inset:-2px;border-radius:18px;border:2px solid var(--brown);animation:ping 2s var(--ease) infinite}
+@keyframes ping{0%{opacity:.7;transform:scale(1)}80%,100%{opacity:0;transform:scale(1.12)}}
+.day.future{background:transparent;color:#B9AC9C;box-shadow:inset 0 0 0 1.5px var(--line)}
+.day.done{background:var(--ok-bg)}
+.day.pend{background:var(--wait-bg)}
+.day.missed{background:var(--miss-bg)}
+.day.blank{background:transparent;pointer-events:none}
+.tdot{width:6px;height:6px;border-radius:9px;background:var(--brown);position:absolute;left:12px;bottom:10px}
+.avs{margin-top:auto;display:flex;align-items:center;justify-content:flex-end}
+.av{flex:none;border-radius:999px;display:grid;place-items:center;font-weight:700;color:#fff}
+.avs .av{width:20px;height:20px;font-size:9px;border:2px solid #fff;margin-left:-7px}
+.avs .more{font-size:10.5px;font-weight:700;color:var(--ink2);margin-left:3px}
+.rv{position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:9px;background:var(--wait);box-shadow:0 0 0 3px #fff}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;color:var(--ink2);font-size:12.5px;font-weight:500}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend .ico{position:static;width:16px;height:16px}
+.swap .day:not(.blank),.swap .dow{animation:pop .45s var(--ease) both;animation-delay:calc(var(--i,0) * 12ms)}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.94)}}
+@media (max-width:640px){
+  .cal{gap:5px}.day{border-radius:12px;padding:4px;min-height:44px}
+  .num{font-size:12.5px;width:22px;height:22px}
+  .ico{width:15px;height:15px;top:4px;right:4px}
+  .avs .av{width:11px;height:11px;font-size:0;border-width:1.5px;margin-left:-5px}.avs .more{display:none}
+  .tdot{left:7px;bottom:6px}.rv{top:4px;right:4px}
+  .card{padding:16px}.cal-head h2{font-size:22px}
+}
+
+.lead{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;background:var(--white);color:var(--brown-d);border-radius:999px;padding:2px 8px 2px 2px;max-width:calc(100% - 12px);white-space:nowrap;overflow:hidden;box-shadow:0 2px 6px -2px rgba(59,42,30,.25)}
+.lead .av{width:18px;height:18px;font-size:8px}
+.lead b{overflow:hidden;text-overflow:ellipsis}
+.day.mine:not(.today){box-shadow:inset 0 0 0 2px var(--sand)}
+.day.mine .lead{background:var(--brown);color:#fff}
+.mine-key{width:14px;height:14px;border-radius:5px;box-shadow:inset 0 0 0 2px var(--sand);display:inline-block}
+.claim{display:flex;flex-wrap:wrap;gap:8px;justify-content:inherit}
+.up{display:flex;flex-direction:column;gap:4px}
+.up-row{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:12px;font-size:14px}
+.up-row:nth-child(-n+2){background:var(--paper)}
+.up-row span:first-child{width:96px;color:var(--ink2)}
+.up-row .av{width:26px;height:26px;font-size:10px}
+.day.future .lead{color:var(--brown-d)}
+.announce{position:relative;display:inline-block;border:none;background:rgba(255,255,255,.16);color:#fff;border-radius:999px;padding:6px 14px;font-size:13.5px;margin-bottom:10px;animation:bob 3s ease-in-out infinite}
+.announce b{font-weight:700}
+.announce.me{background:var(--white);color:var(--brown-d);font-weight:700}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.leader{margin-top:12px;display:flex;align-items:center;gap:12px;background:linear-gradient(140deg,#F3E6D6,#E3CDB4);border-radius:18px;padding:12px 14px}
+.leader .av{width:40px;height:40px;font-size:14px}
+.leader small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--brown-d);font-weight:700}
+.leader b{font-family:'Fraunces',serif;font-size:19px;font-weight:600}
+@media (max-width:640px){.lead{left:50%;transform:translateX(-50%);bottom:4px;padding:0;background:transparent!important;box-shadow:none}.lead b{display:none}.lead .av{width:16px;height:16px;font-size:7px}}
+@media (max-width:560px){.claim{justify-content:center}}
+/* side */
+.lb{display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;transition:background .2s}
+.lb-row:hover,.lb-row.me{background:var(--paper)}
+.lb-row .rk{width:22px;text-align:center;font-weight:700;color:var(--ink2)}
+.lb-row .av{width:30px;height:30px;font-size:12px}
+.lb-row .nm{flex:1;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-row .st{font-weight:700;font-size:14px}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.badge{aspect-ratio:1/1;display:grid;place-items:center;border-radius:16px;background:var(--paper);font-size:24px;position:relative;transition:transform .25s var(--ease)}
+.badge:hover{transform:scale(1.08) rotate(-3deg)}
+.badge.got{background:linear-gradient(140deg,#F3E6D6,#E3CDB4)}
+.badge:not(.got){filter:grayscale(1);opacity:.4}
+.badge.got.new{animation:shine 1.2s var(--ease)}
+@keyframes shine{0%{transform:scale(.4) rotate(-20deg)}60%{transform:scale(1.2) rotate(6deg)}}
+.badge-lbl{margin-top:10px;font-size:13px;color:var(--ink2)}
+.empty{color:var(--ink2);text-align:center;padding:16px 6px;font-size:14px}
+
+/* buttons */
+.btn{position:relative;overflow:hidden;border:none;border-radius:14px;padding:12px 20px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .2s var(--ease),box-shadow .2s,background .2s}
+.btn:active{transform:scale(.96)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.light{background:var(--white);color:var(--brown-d);box-shadow:0 10px 24px -8px rgba(0,0,0,.35)}
+.btn.light:hover{transform:translateY(-2px)}
+.btn.light::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(159,113,79,.18),transparent);animation:sheen 3.2s ease-in-out infinite}
+@keyframes sheen{0%,60%{left:-60%}100%{left:130%}}
+.btn.done{background:rgba(255,255,255,.18);color:#fff}
+.btn.main{background:var(--brown);color:#fff}
+.btn.main:hover{background:var(--brown-d)}
+.btn.soft{background:var(--paper);color:var(--ink)}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.warn{background:var(--wait-bg);color:#8A5D1F}
+.btn.danger{background:var(--miss-bg);color:var(--miss)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:11px}
+.btn.full{width:100%}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.pill.approved{background:var(--ok-bg);color:var(--ok)}
+.pill.pending{background:var(--wait-bg);color:#8A5D1F}
+.pill.rejected{background:var(--miss-bg);color:var(--miss)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(59,42,30,.42);backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;z-index:50;animation:fade .25s ease}
+.sheet{background:var(--white);border-radius:28px;max-width:600px;width:100%;padding:26px;position:relative;box-shadow:0 40px 80px -20px rgba(59,42,30,.45);animation:up .4s var(--ease)}
+.sheet>*{animation:pop .45s var(--ease) both}
+.sheet>*:nth-child(2){animation-delay:.04s}.sheet>*:nth-child(3){animation-delay:.08s}.sheet>*:nth-child(4){animation-delay:.12s}.sheet>*:nth-child(5){animation-delay:.16s}.sheet>*:nth-child(6){animation-delay:.2s}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{opacity:0;transform:translateY(40px)}}
+@media (max-width:640px){.overlay{padding:30px 0 0;align-items:flex-end}.sheet{border-radius:28px 28px 0 0;padding:22px 18px 30px;min-height:72vh}}
+.x{position:absolute;z-index:5;top:16px;right:16px;width:38px;height:38px;border-radius:12px;border:none;background:var(--paper);font-size:20px;color:var(--ink2);transition:transform .2s}
+.x:hover{transform:rotate(90deg)}
+.m-kick{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--brown)}
+.m-date{font-family:'Fraunces',serif;font-size:26px;font-weight:600;padding-right:44px;line-height:1.15}
+.theme{margin-top:12px;display:flex;gap:10px;align-items:center;background:var(--paper);border-radius:16px;padding:11px 14px;font-weight:700;font-size:14.5px}
+.theme span{color:var(--ink2);font-weight:500}
+.sheet section{margin-top:22px}
+.sec-t{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);margin-bottom:10px}
+.people{display:flex;flex-wrap:wrap;gap:8px}
+.person{display:flex;align-items:center;gap:8px;background:var(--paper);border-radius:999px;padding:4px 12px 4px 4px;font-weight:700;font-size:14px;animation:pop .4s var(--ease) both}
+.person .av{width:28px;height:28px;font-size:11px}
+.person i{font-style:normal;font-size:12px}
+.note{border-radius:16px;padding:12px 14px;font-size:14.5px;font-weight:500}
+.note.soft{background:var(--paper);color:var(--ink2)}
+.note.warn{background:var(--miss-bg);color:#7E3A28}
+.note.good{background:var(--ok-bg);color:#3F5A32}
+.note.wait{background:var(--wait-bg);color:#7A521B}
+/* form */
+.form{display:flex;flex-direction:column;gap:12px}
+.field label{display:block;font-weight:700;font-size:13.5px;margin-bottom:5px}
+.field label em{font-style:normal;color:var(--ink2);font-weight:400}
+.field input,.field textarea{width:100%;border:1.5px solid transparent;border-radius:14px;padding:12px 14px;font:inherit;font-size:15px;color:var(--ink);background:var(--paper);outline:none;transition:border-color .2s,background .2s,box-shadow .2s}
+.field textarea{min-height:84px;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:var(--sand);background:#fff;box-shadow:0 0 0 4px rgba(192,168,143,.25)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:540px){.row2{grid-template-columns:1fr}}
+.moods{display:flex;gap:6px;flex-wrap:wrap}
+.mood{border:none;background:var(--paper);border-radius:14px;width:46px;height:46px;font-size:22px;transition:transform .2s var(--ease),background .2s}
+.mood:hover{transform:translateY(-2px)}
+.mood.on{background:var(--sand);transform:scale(1.1)}
+.entry{background:var(--paper);border-radius:20px;padding:16px 18px}
+.entry h4{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin:0 0 4px}
+.entry .ref{color:var(--brown);font-weight:700;font-size:14px}
+.entry .blk{margin-top:12px}
+.entry .blk b{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.entry .blk p{margin:3px 0 0;white-space:pre-wrap}
+.entry .ed{margin-top:10px;font-size:12px;color:var(--ink2)}
+.sub{border-radius:20px;padding:12px;margin-bottom:10px;background:var(--white);box-shadow:inset 0 0 0 1.5px var(--line)}
+.sub-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sub-top .nm{font-weight:700;flex:1;min-width:110px}
+.sub-top .av{width:34px;height:34px;font-size:12px}
+.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.mini{width:100%;border:none;background:var(--paper);border-radius:11px;padding:9px 12px;font:inherit;font-size:14px;margin-top:8px;outline:none}
+details summary{cursor:pointer;font-weight:700;color:var(--brown);font-size:14px;list-style:none}
+details summary::-webkit-details-marker{display:none}
+/* host tables */
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px}
+.tbl th{text-align:left;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);padding:8px;font-weight:700}
+.tbl td{padding:10px 8px;border-top:1px solid var(--line)}
+.tbl tr{animation:pop .4s var(--ease) both}
+.tbl .w{display:flex;align-items:center;gap:8px;font-weight:700}
+.tbl .w .av{width:30px;height:30px;font-size:11px}
+.scroll{overflow-x:auto}
+.rv-row{display:flex;align-items:center;gap:10px;padding:12px;border-radius:18px;background:var(--paper);margin-bottom:8px;flex-wrap:wrap;animation:pop .4s var(--ease) both}
+.rv-row .av{width:36px;height:36px;font-size:12px}
+.rv-row .nm{flex:1;min-width:130px;font-weight:700}
+.rv-row .nm small{display:block;color:var(--ink2);font-weight:500}
+.page-t{font-size:24px;margin-bottom:14px}
+/* misc */
+.banner{background:var(--white);border-radius:16px;padding:11px 16px;margin-top:12px;box-shadow:var(--shadow);font-size:14.5px;display:flex;gap:10px;align-items:center}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);background:var(--ink);color:var(--cream);padding:12px 20px;border-radius:16px;font-weight:700;opacity:0;pointer-events:none;transition:.35s var(--ease);z-index:80;max-width:92vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.err{background:var(--miss)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:90;width:100%;height:100%}
+.loading{display:inline-flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:9px;background:var(--brown);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.intro .hero,.intro .chip,.intro .card,.intro .tabs{animation:pop .7s var(--ease) both}
+.intro .chip:nth-child(2){animation-delay:.06s}.intro .chip:nth-child(3){animation-delay:.12s}.intro .chip:nth-child(4){animation-delay:.18s}
+.intro .grid .card{animation-delay:.2s}.intro .side .card:nth-child(2){animation-delay:.28s}.intro .side .card:nth-child(3){animation-delay:.36s}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.sheet.small{max-width:420px}
+@media (max-width:640px){.sheet.small{min-height:auto}}
+.dlg-head{display:flex;gap:12px;align-items:center;padding-right:40px}
+.dlg-head .av{width:48px;height:48px;font-size:16px}
+.pin{font-size:24px!important;letter-spacing:.4em;text-align:center}
+.dlg-err{color:var(--miss);font-weight:700;font-size:14px;min-height:20px}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.field select{width:100%;border:1.5px solid transparent;border-radius:14px;padding:12px 14px;font:inherit;font-size:15px;color:var(--ink);background:var(--paper);outline:none}
+.field select:focus{border-color:var(--sand);background:#fff}
+button.who-me{border:none;cursor:pointer}
+.who-me .av{width:28px;height:28px;font-size:11px;flex:none}
+.foot{text-align:center;padding:0 0 32px;color:var(--ink2);font-size:13px}
+.foot button{border:none;background:none;color:var(--ink2);text-decoration:underline;padding:4px 8px}
+</style>
+</head>
+<body class="intro">
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 40 40"><circle cx="20" cy="27" r="10" fill="#C0A88F"/><rect x="17.6" y="4" width="4.8" height="30" rx="2" fill="#fff"/><rect x="10" y="11" width="20" height="4.6" rx="2" fill="#fff"/></svg></div>
+      <div><b>Devotion Calendar</b><small>Mt. Calvary Missionary Baptist Church</small></div>
+    </div>
+    <div id="top-right"></div>
+  </header>
+  <main id="app"></main>
+  <footer class="foot">Mt. Calvary Missionary Baptist Church · <button data-action="host-login">Host</button></footer>
+</div>
+<div id="modal-root"></div>
+<div id="dialog-root"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti"></canvas>
+<script src="config.js"></script>
+<script>
+/* ================================================================
+   ICONS — 👉 Replace these with your own icons later.
+   Any SVG markup, or an <img src="icons/done.png"> tag.
+   ================================================================ */
+const ICONS = {
+  done:    `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#6E8B5B"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  missed:  `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#B4614A"/><path d="M8.8 8.8l6.4 6.4M15.2 8.8l-6.4 6.4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+  pending: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#C08A3E"/><path d="M12 6.8V12l3.4 2" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+};
+const VERSES = [
+  ["Thy word is a lamp unto my feet, and a light unto my path.","Psalm 119:105"],
+  ["Let no man despise thy youth; but be thou an example of the believers.","1 Timothy 4:12"],
+  ["Draw nigh to God, and he will draw nigh to you.","James 4:8"],
+  ["But seek ye first the kingdom of God, and his righteousness.","Matthew 6:33"],
+  ["I can do all things through Christ which strengtheneth me.","Philippians 4:13"],
+  ["Trust in the LORD with all thine heart.","Proverbs 3:5"],
+  ["This is the day which the LORD hath made; we will rejoice and be glad in it.","Psalm 118:24"],
+  ["Be still, and know that I am God.","Psalm 46:10"],
+  ["They are new every morning: great is thy faithfulness.","Lamentations 3:23"],
+  ["Thy word have I hid in mine heart, that I might not sin against thee.","Psalm 119:11"],
+  ["O taste and see that the LORD is good.","Psalm 34:8"],
+];
+const MOODS = [["joyful","😊"],["grateful","🙏"],["peaceful","😌"],["encouraged","💪"],["thinking","🤔"],["struggling","😔"]];
+const LEVELS = [
+  {n:0,name:"Seed",e:"🌱"},{n:2,name:"Sprout",e:"🌿"},{n:4,name:"On Fire",e:"🔥"},{n:8,name:"Torch",e:"🕯️"},
+  {n:12,name:"Lighthouse",e:"🗼"},{n:20,name:"Mountain",e:"⛰️"},{n:30,name:"Unshakable",e:"👑"},{n:52,name:"Faithful Year",e:"🏆"},
+];
+const ERR = {
+  bad_pin:"Wrong PIN.", no_pin:"Set your PIN first.", locked:"Too many tries. Wait 10 minutes.", taken:"This name already has a PIN. Ask the host.",
+  pin_format:"Use 4–8 numbers.", not_your_turn:"It's not your turn today.", already_approved:"Already approved — can't change it.",
+  missing_fields:"Fill in title, passage, and what God taught you.", bad_password:"Wrong password.", too_short:"At least 6 characters.", no_member:"Name not found.",
+};
+
+/* ---------------- helpers ---------------- */
+const CFG = window.DEVOTION_CONFIG || {};
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2, "0");
+const key = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseKey = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d); };
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
+const longDate = k => parseKey(k).toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+const shortDate = k => parseKey(k).toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"});
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch(e) { return null; } };
+const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} };
+const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------------- state ---------------- */
+const S = {
+  loaded:false, err:false, me:lsGet("mc-me"), mine:{}, admin:lsGet("mc-admin"), adm:null, owner:false, preview:false,
+  view:new Date(new Date().getFullYear(), new Date().getMonth(), 1), tab:"calendar", modal:null,
+};
+let D = { today:null, members:[], byId:{}, duty:{}, dutyKeys:[], theme:{}, done:{} };
+const todayKey = () => D.today || key(new Date());
+const myId = () => S.me ? S.me.id : null;
+const nameOf = id => (D.byId[id] && D.byId[id].name) || "";
+const active = () => D.members.filter(m => m.active !== false);
+const statusOf = (id, k) => D.done[k + "|" + id] || null;
+const isGood = (id, k) => { const s = statusOf(id, k); return s === "approved" || s === "pending"; };
+
+/* ---------------- server ---------------- */
+async function rpc(fn, args = {}){
+  const k = CFG.SUPABASE_ANON_KEY || "", h = { "Content-Type":"application/json", apikey:k };
+  if (k.startsWith("eyJ")) h.Authorization = "Bearer " + k;
+  const r = await fetch(String(CFG.SUPABASE_URL || "").replace(/\/+$/, "") + "/rest/v1/rpc/" + fn, { method:"POST", headers:h, body:JSON.stringify(args) });
+  if (!r.ok) throw new Error(fn + " " + r.status);
+  return r.json();
+}
+function ingest(c){
+  D.today = c.today; D.members = c.members || []; D.byId = {}; D.members.forEach(m => D.byId[m.id] = m);
+  D.duty = {}; (c.duties || []).forEach(x => { if (x.m != null) D.duty[x.d] = x.m; }); D.dutyKeys = Object.keys(D.duty).sort();
+  D.theme = {}; (c.themes || []).forEach(x => D.theme[x.d] = { title:x.t || "", verse:x.v || "" });
+  D.done = {}; (c.done || []).forEach(x => D.done[x.d + "|" + x.m] = x.s);
+  statsMemo = {};
+}
+async function loadCalendar(){ try { ingest(await rpc("get_calendar")); S.loaded = true; S.err = false; } catch(e) { console.error(e); S.err = true; } }
+async function loadMine(){
+  if (!S.me) { S.mine = {}; return; }
+  try {
+    const r = await rpc("my_devotions", { p_member:S.me.id, p_pin:S.me.pin });
+    if (r.ok) { S.mine = {}; r.items.forEach(x => S.mine[x.day] = x); }
+    else if (r.error !== "locked") { S.me = null; lsSet("mc-me", null); S.mine = {}; toast("Please sign in again.", true); }
+  } catch(e) {}
+}
+let extended = false;
+async function loadAdmin(){
+  if (!S.admin) { S.adm = null; S.owner = false; return; }
+  try {
+    const r = await rpc("admin_get", { p_pw:S.admin.pw });
+    if (r.ok) { S.adm = r; S.owner = !S.preview; if (!extended) { extended = true; extendRotation(); } }
+    else if (r.error === "bad_password") { S.admin = null; S.adm = null; S.owner = false; lsSet("mc-admin", null); toast("Host login expired.", true); }
+  } catch(e) {}
+}
+async function refresh(){ await Promise.all([loadCalendar(), loadMine(), loadAdmin()]); render(); refreshModal(); }
+setInterval(() => { if (!document.hidden) refresh(); }, 30000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+
+/* ---------------- rotation (host) ---------------- */
+function shuffle(a){ for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function genRotation(startK, days, ids, prevLast){
+  const rows = []; let d = parseKey(startK), last = prevLast;
+  while (rows.length < days && ids.length) {
+    const o = shuffle(ids.slice()); if (o.length > 1 && o[0] === last) [o[0], o[1]] = [o[1], o[0]];
+    for (const id of o) { if (rows.length >= days) break; rows.push({ d:key(d), m:id }); d = addDays(d, 1); }
+    last = o[o.length - 1];
+  }
+  return rows;
+}
+async function extendRotation(){
+  const ids = active().map(m => m.id), last = S.adm && S.adm.lastDuty;
+  if (!ids.length || !last) return;
+  if (last >= key(addDays(parseKey(todayKey()), 90))) return;
+  const start = key(addDays(parseKey(last), 1));
+  try { await rpc("admin_set_duties", { p_pw:S.admin.pw, p_rows:genRotation(start, 365, ids, D.duty[last]), p_clear_from:null }); await loadCalendar(); render(); } catch(e) {}
+}
+
+/* ---------------- stats ---------------- */
+let statsMemo = {};
+function statsFor(id){
+  if (statsMemo[id]) return statsMemo[id];
+  const tk = todayKey(), done = k => isGood(id, k);
+  const duties = D.dutyKeys.filter(k => k <= tk && D.duty[k] === id);
+  let cur = 0;
+  for (let i = duties.length - 1; i >= 0; i--) { const k = duties[i]; if (k === tk && !done(k)) continue; if (done(k)) cur++; else break; }
+  let best = 0, run = 0;
+  duties.forEach(k => { if (k === tk && !done(k)) return; run = done(k) ? run + 1 : 0; best = Math.max(best, run); });
+  const missed = duties.filter(k => k < tk && !done(k)).length;
+  let total = 0, approved = 0, waiting = 0, last = null;
+  Object.keys(D.done).forEach(x => { const [k, m] = x.split("|"); if (Number(m) !== id) return; const s = D.done[x];
+    if (s === "approved") { approved++; total++; } else if (s === "pending") { waiting++; total++; } else return; if (!last || k > last) last = k; });
+  const dutyToday = D.duty[tk] === id, doneToday = done(tk);
+  const next = D.dutyKeys.find(k => D.duty[k] === id && (k > tk || (k === tk && !doneToday))) || null;
+  return statsMemo[id] = { cur, best, total, approved, waiting, missed, next, dutyToday, doneToday, last };
+}
+function levelFor(n){ let l = LEVELS[0]; LEVELS.forEach(x => { if (n >= x.n) l = x; }); return l; }
+function nextLevel(n){ return LEVELS.find(x => x.n > n) || null; }
+
+/* avatars */
+function hue(s){ let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
+function initials(n){ return String(n).split(/\s+/).filter(Boolean).slice(0,2).map(w => w[0]).join("").toUpperCase() || "?"; }
+const AVC = ["#9F714F","#7A5236","#B08A68","#6E8B5B","#C08A3E","#B4614A","#8A7360","#5E6F52"];
+function avN(n){ return `<span class="av" style="background:${AVC[hue(String(n).toLowerCase()) % AVC.length]}">${esc(initials(n))}</span>`; }
+const av = id => avN(nameOf(id) || "?");
+
+/* ---------------- render ---------------- */
+let swapGrid = true, prevBadges = null;
+setTimeout(() => document.body.classList.remove("intro"), 1400);
+
+function render(){
+  renderTop();
+  let h = "";
+  if (!CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY || /YOUR-/.test(CFG.SUPABASE_URL + CFG.SUPABASE_ANON_KEY)) h += `<div class="banner">⚙️ Add your Supabase URL and key in <b>config.js</b>.</div>`;
+  else if (S.err) h += `<div class="banner"><span class="dot"></span> Can't reach the server. Retrying…</div>`;
+  if (S.owner) {
+    const pc = (S.adm.devotions || []).filter(d => d.status === "pending").length;
+    h += `<div class="tabs" role="tablist">${tabBtn("calendar","Calendar")}${tabBtn("review","Review" + (pc ? `<span class="cnt">${pc}</span>` : ""))}${tabBtn("members","Members")}</div>`;
+  }
+  if (S.tab === "review" && S.owner) h += `<div class="grid" style="grid-template-columns:1fr">${renderReview()}</div>`;
+  else if (S.tab === "members" && S.owner) h += renderMembers();
+  else {
+    h = renderHero() + h;
+    if (myId()) h += renderChips();
+    h += `<div class="grid"><div class="card">${renderCalendar()}</div><aside class="side">${renderSide()}</aside></div>`;
+  }
+  $("#app").innerHTML = h;
+  swapGrid = false;
+  countUp();
+}
+function tabBtn(id, label){ return `<button class="tab ${S.tab===id?"on":""}" role="tab" aria-selected="${S.tab===id}" data-action="tab" data-tab="${id}">${label}</button>`; }
+function renderTop(){
+  const me = myId() ? `<button class="who-me" data-action="me-menu" title="Switch user">${avN(nameOf(myId()) || "?")}${esc((nameOf(myId()) || "Me").split(" ")[0])}</button>` : "";
+  let h = "";
+  if (S.adm) h = `<div class="top-r">${S.owner ? `<span class="host-chip">👑 Host</span>` : me}<button class="view-btn ${S.owner ? "" : "on"}" data-action="preview">${S.owner ? "👁 Member view" : "👑 Back to host"}</button><button class="view-btn" data-action="host-logout" title="Log out host">⎋</button></div>`;
+  else h = me;
+  $("#top-right").innerHTML = h;
+}
+const shown = {};
+function countUp(){
+  document.querySelectorAll("[data-count]").forEach(el => {
+    const k = el.dataset.count, to = Number(el.textContent) || 0, from = shown[k] == null ? 0 : shown[k];
+    shown[k] = to;
+    if (from === to || reduced()) return;
+    const t0 = performance.now(), dur = 700;
+    (function step(t){ const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(from + (to - from) * e); if (p < 1) requestAnimationFrame(step); })(t0);
+  });
+}
+function verseHTML(){
+  const doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 864e5), v = VERSES[doy % VERSES.length];
+  return `<div class="verse"><q>${esc(v[0])}</q><span>${esc(v[1])}</span></div>`;
+}
+function announce(){
+  const k = key(addDays(parseKey(todayKey()), 1)), id = D.duty[k];
+  if (!id || !nameOf(id)) return "";
+  const me = id === myId();
+  return `<button class="announce ${me ? "me" : ""}" data-action="open-day" data-date="${k}">🎤 ${me ? "You're up tomorrow!" : `Tomorrow: <b>${esc(nameOf(id))}</b>`}</button>`;
+}
+function renderHero(){
+  const tk = todayKey(), id = myId();
+  const blobs = `<span class="blob a"></span><span class="blob b"></span>`;
+  const plain = (icon, title, sub, extra = "") => `<section class="hero">${blobs}<div class="ring"><div class="ring-in" style="font-size:52px">${icon}</div></div>
+    <div class="hero-mid">${announce()}<h1>${title}</h1><p>${sub}</p>${extra}</div>${verseHTML()}</section>`;
+  if (!id) {
+    const list = active();
+    if (!S.loaded) return plain("📖", "Daily time with God", "Read. Reflect. Pray.");
+    if (!list.length) return plain("📖", "Daily time with God", "The host is setting things up.");
+    return plain("👋", "Who are you?", "Tap your name.", `<div class="claim">${list.map(m => `<button class="btn light sm" data-action="pick" data-id="${m.id}">${esc(m.name)}</button>`).join("")}</div>`);
+  }
+  const s = statsFor(id), lvl = levelFor(s.cur), nxt = nextLevel(s.cur);
+  const pct = nxt ? Math.max(0.04, (s.cur - lvl.n) / (nxt.n - lvl.n)) : 1;
+  const C = 2 * Math.PI * 58, off = C * (1 - pct), first = esc(nameOf(id).split(" ")[0]);
+  const st = statusOf(id, tk), duty = D.duty[tk];
+  let title, sub, btn;
+  if (s.dutyToday && st === "approved")      { title = `Well done, ${first}!`; sub = "Your devotion is approved."; btn = `<button class="btn done" data-action="open-day" data-date="${tk}">✓ View</button>`; }
+  else if (s.dutyToday && st === "pending")  { title = `Nice work, ${first}!`; sub = "Waiting for the host."; btn = `<button class="btn done" data-action="open-day" data-date="${tk}">⏳ View</button>`; }
+  else if (s.dutyToday && st === "rejected") { title = "Almost there!"; sub = "The host left you a note."; btn = `<button class="btn light" data-action="open-day" data-date="${tk}">✏️ Fix devotion</button>`; }
+  else if (s.dutyToday)                      { title = "It's your turn today!"; sub = "Share what God showed you."; btn = `<button class="btn light" data-action="open-day" data-date="${tk}">✍️ Write devotion</button>`; }
+  else {
+    title = s.next ? `Your turn: ${esc(shortDate(s.next))}` : `Hi, ${first}!`;
+    sub = duty && nameOf(duty) ? `Today is ${esc(nameOf(duty))}'s turn.` : "No turn today.";
+    btn = s.next ? `<button class="btn done" data-action="open-day" data-date="${s.next}">📅 See my day</button>` : "";
+  }
+  return `<section class="hero ${s.cur > 0 ? "lit" : ""}">${blobs}
+    <div class="ring" title="${nxt ? `${nxt.n - s.cur} more turns to ${nxt.name}` : "Max level"}">
+      <svg width="100%" height="100%" viewBox="0 0 132 132"><circle class="trk" cx="66" cy="66" r="58" fill="none" stroke-width="9"/>
+      <circle class="val" cx="66" cy="66" r="58" fill="none" stroke-width="9" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-off="${off}"/></svg>
+      <div class="ring-in"><div><div class="n" data-count="cur">${s.cur}</div><div class="l">streak</div></div></div>
+      <span class="ring-flame">${s.cur > 0 ? "🔥" : "🌱"}</span>
+    </div>
+    <div class="hero-mid">${announce()}<h1>${title}</h1><p>${sub}</p>${btn}
+      ${nxt ? `<div class="next">${nxt.e} ${nxt.n - s.cur} more turn${nxt.n - s.cur === 1 ? "" : "s"} to ${esc(nxt.name)}</div>` : ""}</div>
+    ${verseHTML()}</section>`;
+}
+new MutationObserver(() => {
+  const c = document.querySelector(".ring .val[data-off]");
+  if (c && !c.dataset.done) { c.dataset.done = 1; const o = c.dataset.off, last = window.__ringOff;
+    if (last != null) { c.style.transition = "none"; c.style.strokeDashoffset = last; }
+    requestAnimationFrame(() => requestAnimationFrame(() => { c.style.transition = ""; c.style.strokeDashoffset = o; window.__ringOff = o; })); }
+}).observe(document.getElementById("app"), { childList:true });
+
+function renderChips(){
+  const s = statsFor(myId());
+  return `<div class="chips">
+    <div class="chip"><span class="i">🏆</span><div><b data-count="best">${s.best}</b><small>Best streak</small></div></div>
+    <div class="chip"><span class="i">📖</span><div><b data-count="total">${s.total}</b><small>Devotions</small></div></div>
+    <div class="chip"><span class="i">🌙</span><div><b data-count="missed">${s.missed}</b><small>Missed turns</small></div></div>
+    <div class="chip"><span class="i">📅</span><div><b style="font-size:17px">${s.next ? esc(shortDate(s.next).replace(/^\w+, /, "")) : "–"}</b><small>Next turn</small></div></div>
+  </div>`;
+}
+function renderCalendar(){
+  const y = S.view.getFullYear(), m = S.view.getMonth();
+  const start = new Date(y, m, 1).getDay(), count = new Date(y, m + 1, 0).getDate();
+  const tk = todayKey(), me = myId(), td = D.duty[tk];
+  const pend = S.owner ? new Set((S.adm.devotions || []).filter(d => d.status === "pending").map(d => d.day)) : new Set();
+  let i = 0;
+  let h = `<div class="cal-head"><div><h2>${S.view.toLocaleDateString("en-US", {month:"long", year:"numeric"})}</h2>
+    <small>${S.loaded ? (td && nameOf(td) ? `Today: <b>${esc(nameOf(td))}</b> ${isGood(td, tk) ? "✓" : ""}` : "No turn today") : `<span class="loading"><span class="dot"></span>Loading</span>`}</small></div>
+    <div class="nav"><button class="nbtn" data-action="prev" aria-label="Previous month">‹</button><button class="nbtn" data-action="today">Today</button><button class="nbtn" data-action="next" aria-label="Next month">›</button></div></div>
+    <div class="cal ${swapGrid ? "swap" : ""}">${["S","M","T","W","T","F","S"].map(d => `<div class="dow" style="--i:${i++}">${d}</div>`).join("")}`;
+  for (let b = 0; b < start; b++) h += `<div class="day blank"></div>`;
+  for (let d = 1; d <= count; d++) {
+    const k = key(new Date(y, m, d)), duty = D.duty[k], dn = nameOf(duty), st = duty ? statusOf(duty, k) : null;
+    const isToday = k === tk, future = k > tk, mine = !!me && duty === me;
+    const cls = ["day"]; let ico = "", label = "";
+    if (isToday) { cls.push("today"); if (mine && !st) cls.push("todo"); }
+    if (future) cls.push("future");
+    if (mine) cls.push("mine");
+    if (st === "approved") { cls.push("done"); ico = ICONS.done; label = "done"; }
+    else if (st === "pending") { cls.push("pend"); ico = ICONS.pending; label = "waiting"; }
+    else if (st === "rejected") { cls.push("missed"); ico = ICONS.missed; label = "returned"; }
+    else if (dn && k < tk) { cls.push("missed"); ico = ICONS.missed; label = "missed"; }
+    h += `<button class="${cls.join(" ")}" style="--i:${i++}" data-action="open-day" data-date="${k}" aria-label="${esc(longDate(k))}${dn ? ", " + esc(dn) + "'s turn" : ""}${label ? ", " + label : ""}">
+      <span class="num">${d}</span>${ico ? `<span class="ico">${ico}</span>` : pend.has(k) ? `<span class="rv"></span>` : ""}
+      ${dn ? `<span class="lead">${avN(dn)}<b>${mine ? "You" : esc(dn.split(" ")[0])}</b></span>` : ""}
+    </button>`;
+  }
+  return h + `</div><div class="legend"><span><span class="ico">${ICONS.done}</span>Done</span><span><span class="ico">${ICONS.pending}</span>Waiting</span><span><span class="ico">${ICONS.missed}</span>Missed</span>${me ? `<span><span class="mine-key"></span>My turn</span>` : ""}</div>`;
+}
+function renderSide(){
+  const rows = active().map(m => ({ m, s: statsFor(m.id) })).sort((a, b) => b.s.cur - a.s.cur || b.s.total - a.s.total || a.m.name.localeCompare(b.m.name));
+  const medals = ["🥇","🥈","🥉"];
+  const lb = rows.length ? rows.map((r, i) => `<div class="lb-row ${r.m.id === myId() ? "me" : ""}"><span class="rk">${r.s.cur > 0 ? (medals[i] || i + 1) : i + 1}</span>${avN(r.m.name)}<span class="nm">${esc(r.m.name)}</span><span class="st">${r.s.cur > 0 ? "🔥 " + r.s.cur : "–"}</span></div>`).join("")
+    : `<div class="empty">No members yet</div>`;
+  let out = `<div class="card"><h3>Streak Squad</h3><div class="lb">${lb}</div></div>`;
+  if (myId()) {
+    const best = statsFor(myId()).best, got = LEVELS.filter(l => best >= l.n).length;
+    const fresh = prevBadges != null && got > prevBadges; prevBadges = got;
+    const nxt = LEVELS.find(l => l.n > best);
+    out += `<div class="card"><h3>Badges</h3><div class="badges">${LEVELS.map((l, i) => `<div class="badge ${best >= l.n ? "got" : ""} ${fresh && i === got - 1 ? "new" : ""}" title="${esc(l.name)} · ${l.n ? l.n + " turns in a row" : "Start"}">${l.e}</div>`).join("")}</div>
+      <div class="badge-lbl">${got}/${LEVELS.length} earned${nxt ? ` · next: ${nxt.e} ${esc(nxt.name)}` : ""}</div></div>`;
+  }
+  return out;
+}
+
+/* ---------------- host views ---------------- */
+function renderReview(){
+  const list = (S.adm.devotions || []).filter(d => d.status === "pending");
+  return `<div class="card"><h2 class="page-t">To review</h2>
+    ${list.length ? list.map((d, i) => `<div class="rv-row" style="animation-delay:${i * 40}ms">${av(d.member)}<div class="nm">${esc(nameOf(d.member))}<small>${esc(shortDate(d.day))} · ${esc(d.title || "")}</small></div>
+      <button class="btn soft sm" data-action="open-day" data-date="${d.day}">Read</button>
+      <button class="btn ok sm" data-action="review" data-id="${d.id}" data-s="approved">✓ Approve</button></div>`).join("")
+    : `<div class="empty">🎉 All caught up</div>`}</div>`;
+}
+function renderMembers(){
+  const list = active(), tk = todayKey(), lockedIds = new Set((S.adm.members || []).filter(m => m.locked).map(m => m.id));
+  let up = ""; for (let i = 0; i < 14; i++) { const k = key(addDays(parseKey(tk), i)), n = nameOf(D.duty[k]); up += `<div class="up-row"><span>${i === 0 ? "Today" : i === 1 ? "Tomorrow" : esc(shortDate(k))}</span>${n ? avN(n) : ""}<b>${esc(n || "–")}</b></div>`; }
+  return `<div class="grid" style="grid-template-columns:1fr"><div class="card"><h2 class="page-t">Members</h2>
+    ${list.length ? `<div class="scroll"><table class="tbl"><thead><tr><th>Name</th><th>Joined</th><th>Streak</th><th>Best</th><th>Approved</th><th>Waiting</th><th>Missed</th><th>Next turn</th><th></th></tr></thead><tbody>
+      ${list.map((m, i) => { const s = statsFor(m.id); return `<tr style="animation-delay:${i * 30}ms"><td><span class="w">${avN(m.name)}${esc(m.name)}</span></td>
+        <td>${m.joined ? (lockedIds.has(m.id) ? "🔒 Locked" : "✓") : `<span style="color:var(--ink2)">Not yet</span>`}</td><td>${s.cur > 0 ? "🔥 " + s.cur : "–"}</td><td>${s.best}</td><td>${s.approved}</td><td>${s.waiting}</td><td>${s.missed}</td><td>${s.next ? esc(shortDate(s.next)) : "–"}</td>
+        <td>${m.joined ? `<button class="btn soft sm" data-action="reset-pin" data-id="${m.id}">${S.confirmReset === m.id ? "Reset?" : "Reset PIN"}</button>` : ""}</td></tr>`; }).join("")}
+    </tbody></table></div>` : `<div class="empty">Add your members below.</div>`}</div></div>
+  <div class="grid" style="margin-top:0">
+    <div class="side">
+      <div class="card"><h3>Roster</h3>
+        <div class="field"><textarea id="roster-in" rows="8" placeholder="One name per line">${esc(list.map(m => m.name).join("\n"))}</textarea></div>
+        <div class="actions"><button class="btn main sm" data-action="save-roster">Save</button><button class="btn soft sm" data-action="reshuffle">🔀 Reshuffle</button></div>
+        <div class="badge-lbl">Turns change from tomorrow.</div></div>
+      <div class="card"><h3>Host password</h3>
+        <div class="row2"><div class="field"><input id="pw-new" type="password" placeholder="New password" autocomplete="new-password"></div>
+        <div class="field"><input id="pw-new2" type="password" placeholder="Repeat" autocomplete="new-password"></div></div>
+        <div class="actions"><button class="btn main sm" data-action="change-pw">Change</button></div></div>
+    </div>
+    <div class="card"><h3>Next 2 weeks</h3><div class="up">${up}</div></div>
+  </div>`;
+}
+
+/* ---------------- dialogs (PIN / host login) ---------------- */
+function openDialog(html){
+  $("#dialog-root").innerHTML = `<div class="overlay" data-action="dlg-overlay"><div class="sheet small" role="dialog" aria-modal="true"><button class="x" data-action="dlg-close" aria-label="Close">×</button>${html}</div></div>`;
+  document.body.classList.add("lock");
+  setTimeout(() => { const f = document.querySelector("#dialog-root input"); if (f) f.focus(); }, 80);
+}
+function closeDialog(){ $("#dialog-root").innerHTML = ""; if (!S.modal) document.body.classList.remove("lock"); }
+function pinDialog(id){
+  const m = D.byId[id]; if (!m) return;
+  openDialog(`<div class="dlg-head">${avN(m.name)}<div><div class="m-kick">${m.joined ? "Welcome back" : "First time"}</div><div class="m-date">${esc(m.name)}</div></div></div>
+    <form data-form="pin" data-id="${id}" data-new="${m.joined ? "" : 1}" class="form" style="margin-top:16px">
+      <div class="field"><label>${m.joined ? "Your PIN" : "Create a 4-digit PIN"}</label><input name="pin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" required></div>
+      ${m.joined ? "" : `<div class="field"><label>Repeat PIN</label><input name="pin2" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" required></div>`}
+      <div class="dlg-err" id="dlg-err"></div>
+      <button class="btn main full" type="submit">${m.joined ? "Enter" : "Join"}</button>
+      ${m.joined ? `<div class="badge-lbl" style="text-align:center">Forgot it? Ask the host to reset.</div>` : ""}
+    </form>`);
+}
+function hostDialog(){
+  openDialog(`<div class="m-kick">Host</div><div class="m-date">Host login</div>
+    <form data-form="host" class="form" style="margin-top:16px">
+      <div class="field"><input name="pw" type="password" placeholder="Password" autocomplete="current-password" required></div>
+      <div class="dlg-err" id="dlg-err"></div>
+      <button class="btn main full" type="submit">Log in</button>
+    </form>`);
+}
+function dlgErr(msg){ const e = $("#dlg-err"); if (e) { e.textContent = msg; e.classList.remove("shake"); void e.offsetWidth; e.classList.add("shake"); } }
+
+/* ---------------- day modal ---------------- */
+function openDay(k){
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+  const tk = todayKey();
+  S.modal = { date:k, editing:null, sig:{}, confirmDel:null };
+  $("#modal-root").innerHTML = `<div class="overlay" data-action="overlay"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <button class="x" data-action="close" aria-label="Close">×</button>
+    <div><div class="m-kick">${k === tk ? "Today" : k > tk ? "Upcoming" : "Past"}</div><div class="m-date" id="m-title">${esc(longDate(k))}</div><div id="m-theme"></div></div>
+    ${S.owner ? `<div id="m-theme-edit" style="margin-top:10px"></div>` : ""}
+    <section><div class="sec-t">Did their devotion</div><div id="m-who"></div></section>
+    <section id="m-mine"></section>
+    ${S.owner ? `<section id="m-host"></section>` : ""}
+  </div></div>`;
+  document.body.classList.add("lock");
+  if (S.owner) {
+    const t = D.theme[k] || {}, cur = D.duty[k] || "";
+    $("#m-theme-edit").innerHTML = `<details><summary>Change turn & theme</summary>
+      <div class="field" style="margin-top:8px"><select id="th-member"><option value="">— Nobody —</option>${active().map(m => `<option value="${m.id}" ${m.id === cur ? "selected" : ""}>${esc(m.name)}</option>`).join("")}</select></div>
+      <div class="row2" style="margin-top:8px"><div class="field"><input id="th-title" maxlength="80" placeholder="Theme" value="${esc(t.title || "")}"></div>
+      <div class="field"><input id="th-verse" maxlength="80" placeholder="Reading, e.g. John 3" value="${esc(t.verse || "")}"></div></div>
+      <button class="btn main sm" style="margin-top:8px" data-action="save-day">Save</button></details>`;
+  }
+  refreshModal(true);
+}
+function closeModal(){
+  const o = document.querySelector("#modal-root .overlay");
+  S.modal = null; document.body.classList.remove("lock");
+  if (o && !reduced()) { o.style.transition = "opacity .2s"; o.style.opacity = 0; setTimeout(() => { if (!S.modal) $("#modal-root").innerHTML = ""; }, 200); }
+  else $("#modal-root").innerHTML = "";
+}
+function setSec(id, sig, html, force){
+  const el = document.getElementById(id); if (!el) return;
+  if (!force && S.modal.sig[id] === sig) return;
+  S.modal.sig[id] = sig; el.innerHTML = html;
+}
+function refreshModal(force){
+  const m = S.modal; if (!m) return;
+  const k = m.date, tk = todayKey(), me = myId(), duty = D.duty[k], dn = nameOf(duty), mine = !!me && duty === me;
+  const t = D.theme[k];
+  setSec("m-theme", JSON.stringify(t) + dn + me, (dn ? `<div class="leader">${avN(dn)}<div><small>Devotion turn</small><b>${mine ? "You! 🎉" : esc(dn)}</b></div></div>` : "")
+    + (t && (t.title || t.verse) ? `<div class="theme">⭐ ${esc(t.title || "")}${t.verse ? `<span>· ${esc(t.verse)}</span>` : ""}</div>` : ""), force);
+  const who = D.members.filter(x => isGood(x.id, k));
+  setSec("m-who", who.map(x => x.id + statusOf(x.id, k)).join("|"), who.length
+    ? `<div class="people">${who.map((x, i) => `<span class="person" style="animation-delay:${i * 40}ms">${avN(x.name)}${esc(x.name)} <i>${statusOf(x.id, k) === "approved" ? "✅" : "⏳"}</i></span>`).join("")}</div>`
+    : `<div class="note soft">${k > tk ? "Not yet" : k === tk ? "Not yet today" : "No one this day."}</div>`, force);
+
+  if (m.editing !== "me") {
+    const entry = S.mine[k], st = entry && entry.status;
+    let html, sig;
+    if (!me) { sig = "anon"; html = `<div class="note soft">Tap your name at the top to join.</div>`; }
+    else if (entry) {
+      sig = "entry" + JSON.stringify(entry);
+      const canEdit = k === tk && mine && st !== "approved";
+      const head = st === "rejected" ? `<div class="note warn">✏️ Returned${entry.note ? `: “${esc(entry.note)}”` : ""}</div>`
+        : st === "approved" ? `<div class="note good">✅ Approved — great job!</div>` : `<div class="note wait">⏳ Waiting for the host</div>`;
+      html = `<div class="sec-t">My devotion</div>${head}<div style="height:10px"></div>${entryHTML(entry)}
+        ${canEdit ? `<div class="actions"><button class="btn soft sm" data-action="edit-mine">✏️ Edit</button></div>` : ""}`;
+    }
+    else if (k === tk && mine) {
+      sig = "form"; html = `<div class="sec-t">My devotion</div>${formHTML(null, "mine")}`;
+      if (sig === m.sig["m-mine"]) html = null; // never wipe a form being typed in
+    }
+    else if (k === tk) { const nx = statsFor(me).next; sig = "notmine" + dn + nx; html = `<div class="note soft">Today is ${esc(dn || "nobody")}'s turn.${nx ? ` Yours is ${esc(shortDate(nx))}.` : ""}</div>`; }
+    else if (k < tk) { sig = "past"; html = `<div class="note soft">This day has passed.</div>`; }
+    else { sig = "future" + mine; html = `<div class="note soft">${mine ? `Your turn! Come back on ${esc(shortDate(k))} to write it.` : `Come back on ${esc(shortDate(k))}.`}</div>`; }
+    if (html != null) setSec("m-mine", sig, html, force);
+  }
+  if (S.owner && !(m.editing && m.editing !== "me")) {
+    const subs = (S.adm.devotions || []).filter(d => d.day === k);
+    const sig = JSON.stringify(subs) + m.confirmDel;
+    setSec("m-host", sig, `<div class="sec-t">Review (${subs.length})</div>` + (subs.length ? subs.map(hostItem).join("") : `<div class="note soft">Nothing to review.</div>`), force);
+  }
+}
+function hostItem(d){
+  const st = d.status;
+  return `<div class="sub" id="sub-${d.id}"><div class="sub-top">${av(d.member)}<span class="nm">${esc(nameOf(d.member))}</span><span class="pill ${st}">${st === "approved" ? "✓ Approved" : st === "rejected" ? "↩ Returned" : "⏳ Waiting"}</span></div>
+    ${st === "rejected" && d.note ? `<div class="note warn" style="margin-top:8px;padding:8px 12px">${esc(d.note)}</div>` : ""}
+    <div style="margin-top:10px">${entryHTML(d)}</div>
+    <div class="actions">
+      ${st !== "approved" ? `<button class="btn ok sm" data-action="review" data-id="${d.id}" data-s="approved">✓ Approve</button>` : ""}
+      ${st !== "rejected" ? `<button class="btn warn sm" data-action="review" data-id="${d.id}" data-s="rejected">↩ Return</button>` : ""}
+      <button class="btn soft sm" data-action="host-edit" data-id="${d.id}">✏️</button>
+      <button class="btn danger sm" data-action="host-delete" data-id="${d.id}">${S.modal && S.modal.confirmDel === d.id ? "Delete?" : "🗑"}</button>
+    </div>
+    ${st !== "rejected" ? `<input class="mini" id="note-${d.id}" maxlength="200" placeholder="Note (optional, if returning)">` : ""}
+  </div>`;
+}
+function entryHTML(e){
+  const mood = MOODS.find(x => x[0] === e.mood);
+  const blk = (label, v) => v ? `<div class="blk"><b>${label}</b><p>${esc(v)}</p></div>` : "";
+  return `<div class="entry"><h4>${mood ? mood[1] + " " : ""}${esc(e.title || "Devotion")}</h4><div class="ref">📖 ${esc(e.passage || "")}</div>
+    ${blk("Key verse", e.verse)}${blk("God taught me", e.lesson)}${blk("I'll live it by", e.action)}${blk("Prayer", e.prayer)}
+    ${e.editedByHost ? `<div class="ed">Edited by host</div>` : ""}</div>`;
+}
+function formHTML(entry, mode){
+  const k = S.modal.date;
+  const d = entry || (mode === "mine" ? lsGet("mc-draft-" + k) : null) || {};
+  return `<form class="form" data-form="devotion" data-mode="${mode}" ${entry && entry.id ? `data-id="${entry.id}"` : ""}>
+    <div class="field"><label>Mood</label><div class="moods">${MOODS.map(m => `<button type="button" class="mood ${d.mood === m[0] ? "on" : ""}" title="${m[0]}" aria-label="${m[0]}" data-action="mood" data-mood="${m[0]}">${m[1]}</button>`).join("")}</div><input type="hidden" name="mood" value="${esc(d.mood || "")}"></div>
+    <div class="row2">
+      <div class="field"><label for="f-title">Title</label><input id="f-title" name="title" maxlength="100" required placeholder="God is my strength" value="${esc(d.title || "")}"></div>
+      <div class="field"><label for="f-passage">Passage</label><input id="f-passage" name="passage" maxlength="80" required placeholder="Psalm 23" value="${esc(d.passage || "")}"></div>
+    </div>
+    <div class="field"><label for="f-verse">Key verse <em>· optional</em></label><input id="f-verse" name="verse" maxlength="400" value="${esc(d.verse || "")}"></div>
+    <div class="field"><label for="f-lesson">What God taught me</label><textarea id="f-lesson" name="lesson" maxlength="4000" required>${esc(d.lesson || "")}</textarea></div>
+    <div class="field"><label for="f-action">I'll live it by <em>· optional</em></label><textarea id="f-action" name="action" maxlength="2000" style="min-height:64px">${esc(d.action || "")}</textarea></div>
+    <div class="field"><label for="f-prayer">Prayer <em>· optional</em></label><textarea id="f-prayer" name="prayer" maxlength="2000" style="min-height:64px">${esc(d.prayer || "")}</textarea></div>
+    <div class="actions"><button class="btn main" type="submit">${entry ? "Save" : "Submit 🙌"}</button>${entry ? `<button class="btn soft" type="button" data-action="cancel-edit">Cancel</button>` : ""}</div>
+  </form>`;
+}
+
+/* ---------------- actions ---------------- */
+async function act(fn, args, okMsg){
+  try { const r = await rpc(fn, args); if (!r.ok) { toast(ERR[r.error] || "Something went wrong.", true); return false; } if (okMsg) toast(okMsg); return true; }
+  catch(e) { console.error(e); toast("Can't reach the server. Try again.", true); return false; }
+}
+const pw = () => S.admin && S.admin.pw;
+
+async function submitDevotion(form){
+  const fd = new FormData(form), g = n => String(fd.get(n) || "").trim();
+  const data = { mood:g("mood"), title:g("title"), passage:g("passage"), verse:g("verse"), lesson:g("lesson"), action:g("action"), prayer:g("prayer") };
+  if (!data.title || !data.passage || !data.lesson) return toast(ERR.missing_fields, true);
+  const btn = form.querySelector("[type=submit]"), label = btn.textContent; btn.disabled = true; btn.textContent = "Saving…";
+  const k = S.modal.date;
+  if (form.dataset.mode === "host") {
+    if (await act("admin_edit_devotion", { p_pw:pw(), p_id:Number(form.dataset.id), p:data }, "Saved")) { S.modal.editing = null; await refresh(); refreshModal(true); }
+    else { btn.disabled = false; btn.textContent = label; }
+    return;
+  }
+  const wasNew = !S.mine[k];
+  if (await act("submit_devotion", { p_member:S.me.id, p_pin:S.me.pin, p:data })) {
+    lsSet("mc-draft-" + k, null); S.modal.editing = null;
+    await refresh(); refreshModal(true);
+    if (wasNew) { confetti(); const s = statsFor(myId()); toast(s.cur > 1 ? `🔥 Devotion sent! ${s.cur} in a row!` : "🎉 Devotion sent!"); } else toast("Saved ✓");
+  } else { btn.disabled = false; btn.textContent = label; }
+}
+async function pinSubmit(form){
+  const id = Number(form.dataset.id), isNew = !!form.dataset.new;
+  const pin = String(form.elements.pin.value).trim();
+  if (!/^[0-9]{4,8}$/.test(pin)) return dlgErr(ERR.pin_format);
+  if (isNew && pin !== String(form.elements.pin2.value).trim()) return dlgErr("PINs don't match.");
+  const btn = form.querySelector("[type=submit]"); btn.disabled = true;
+  try {
+    if (isNew) { const r = await rpc("member_set_pin", { p_member:id, p_pin:pin }); if (!r.ok) { btn.disabled = false; return dlgErr(ERR[r.error] || "Try again."); } }
+    const r = await rpc("member_login", { p_member:id, p_pin:pin });
+    if (!r.ok) { btn.disabled = false; return dlgErr(ERR[r.error] || "Try again."); }
+    S.me = { id, pin }; lsSet("mc-me", S.me); closeDialog();
+    await refresh(); confetti(); toast(`Welcome, ${nameOf(id).split(" ")[0]}! 🎉`);
+  } catch(e) { btn.disabled = false; dlgErr("Can't reach the server."); }
+}
+async function hostSubmit(form){
+  const p = String(form.elements.pw.value);
+  const btn = form.querySelector("[type=submit]"); btn.disabled = true;
+  try {
+    const r = await rpc("admin_login", { p_pw:p });
+    if (!r.ok) { btn.disabled = false; return dlgErr(ERR[r.error] || "Try again."); }
+    S.admin = { pw:p }; lsSet("mc-admin", S.admin); S.preview = false; closeDialog();
+    await refresh(); toast("👑 Welcome, host!");
+  } catch(e) { btn.disabled = false; dlgErr("Can't reach the server."); }
+}
+async function saveRoster(reshuffle){
+  const names = [...new Set(String(($("#roster-in") || {}).value || "").split("\n").map(n => n.trim().slice(0, 40)).filter(Boolean))];
+  if (!names.length) return toast("Add at least one name.", true);
+  if (!reshuffle && !(await act("admin_save_members", { p_pw:pw(), p_names:names }))) return;
+  await loadCalendar();
+  const ids = active().map(m => m.id), tm = key(addDays(parseKey(todayKey()), 1));
+  if (await act("admin_set_duties", { p_pw:pw(), p_rows:genRotation(tm, 365, ids, D.duty[todayKey()]), p_clear_from:tm }, reshuffle ? "🔀 Reshuffled from tomorrow" : "Roster saved")) await refresh();
+}
+
+document.addEventListener("click", async e => {
+  const t = e.target.closest("[data-action]"); if (!t) return;
+  const a = t.dataset.action;
+  if (a === "overlay") { if (e.target === t) closeModal(); return; }
+  if (a === "dlg-overlay") { if (e.target === t) closeDialog(); return; }
+  if (a === "close") return closeModal();
+  if (a === "dlg-close") return closeDialog();
+  if (a === "tab") { S.tab = t.dataset.tab; return render(); }
+  if (a === "prev" || a === "next") { S.view = new Date(S.view.getFullYear(), S.view.getMonth() + (a === "next" ? 1 : -1), 1); swapGrid = true; return render(); }
+  if (a === "today") { const n = parseKey(todayKey()); S.view = new Date(n.getFullYear(), n.getMonth(), 1); swapGrid = true; return render(); }
+  if (a === "open-day") return openDay(t.dataset.date);
+  if (a === "pick") return pinDialog(Number(t.dataset.id));
+  if (a === "host-login") return hostDialog();
+  if (a === "me-menu") { openDialog(`<div class="dlg-head">${avN(nameOf(myId()))}<div><div class="m-kick">Signed in as</div><div class="m-date">${esc(nameOf(myId()))}</div></div></div><div class="actions" style="margin-top:16px"><button class="btn main" data-action="me-logout">Switch user</button><button class="btn soft" data-action="dlg-close">Cancel</button></div>`); return; }
+  if (a === "me-logout") { S.me = null; S.mine = {}; lsSet("mc-me", null); closeDialog(); statsMemo = {}; render(); return toast("Signed out"); }
+  if (a === "host-logout") { S.admin = null; S.adm = null; S.owner = false; S.preview = false; S.tab = "calendar"; lsSet("mc-admin", null); if (S.modal) closeModal(); render(); return toast("Host logged out"); }
+  if (a === "preview") { if (S.modal) closeModal(); S.preview = !S.preview; S.owner = !!S.adm && !S.preview; S.tab = "calendar"; swapGrid = true; render(); return toast(S.owner ? "👑 Back to host mode" : "👁 This is what members see"); }
+  if (a === "mood") { const f = t.closest("form"); f.querySelectorAll(".mood").forEach(b => b.classList.toggle("on", b === t)); f.elements.mood.value = t.dataset.mood; draft(f); return; }
+  if (a === "edit-mine") { S.modal.editing = "me"; setSec("m-mine", "edit", `<div class="sec-t">Edit devotion</div>${formHTML(S.mine[S.modal.date], "mine")}`, true); return; }
+  if (a === "cancel-edit") { S.modal.editing = null; S.modal.sig = {}; return refreshModal(true); }
+  if (a === "review") { const id = Number(t.dataset.id), n = document.getElementById("note-" + id);
+    if (await act("admin_review", { p_pw:pw(), p_id:id, p_status:t.dataset.s, p_note:n ? n.value.trim() : "" }, t.dataset.s === "approved" ? "✓ Approved" : "↩ Returned")) await refresh(); return; }
+  if (a === "host-edit") { const id = Number(t.dataset.id), d = (S.adm.devotions || []).find(x => x.id === id); if (!d) return;
+    S.modal.editing = id; const el = document.getElementById("sub-" + id); if (el) el.innerHTML = `<div class="sec-t">Editing ${esc(nameOf(d.member))}</div>${formHTML(d, "host")}`; return; }
+  if (a === "host-delete") { const id = Number(t.dataset.id);
+    if (S.modal.confirmDel === id) { S.modal.confirmDel = null; if (await act("admin_delete_devotion", { p_pw:pw(), p_id:id }, "Deleted")) await refresh(); }
+    else { S.modal.confirmDel = id; refreshModal(); } return; }
+  if (a === "save-day") { const k = S.modal.date, mv = $("#th-member").value;
+    if (await act("admin_set_day", { p_pw:pw(), p_day:k, p_member:mv ? Number(mv) : null, p_title:$("#th-title").value, p_verse:$("#th-verse").value }, "Saved")) await refresh(); return; }
+  if (a === "save-roster" || a === "reshuffle") return saveRoster(a === "reshuffle");
+  if (a === "reset-pin") { const id = Number(t.dataset.id);
+    if (S.confirmReset === id) { S.confirmReset = null; if (await act("admin_reset_pin", { p_pw:pw(), p_member:id }, `PIN reset — ${nameOf(id)} can set a new one`)) await refresh(); }
+    else { S.confirmReset = id; render(); } return; }
+  if (a === "change-pw") { const n1 = $("#pw-new").value, n2 = $("#pw-new2").value;
+    if (n1.length < 6) return toast(ERR.too_short, true); if (n1 !== n2) return toast("Passwords don't match.", true);
+    if (await act("admin_change_password", { p_pw:pw(), p_new:n1 }, "Password changed")) { S.admin = { pw:n1 }; lsSet("mc-admin", S.admin); render(); } return; }
+});
+document.addEventListener("submit", e => {
+  const f = e.target; e.preventDefault();
+  if (f.dataset.form === "devotion") submitDevotion(f);
+  else if (f.dataset.form === "pin") pinSubmit(f);
+  else if (f.dataset.form === "host") hostSubmit(f);
+});
+let draftT = null;
+function draft(f){
+  if (!S.modal || f.dataset.mode !== "mine" || S.mine[S.modal.date]) return;
+  clearTimeout(draftT); const k = S.modal.date;
+  draftT = setTimeout(() => { const o = {}; new FormData(f).forEach((v, n) => o[n] = v); lsSet("mc-draft-" + k, o); }, 400);
+}
+document.addEventListener("input", e => { const f = e.target.closest && e.target.closest("form[data-form=devotion]"); if (f) draft(f); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { if ($("#dialog-root").innerHTML) closeDialog(); else if (S.modal) closeModal(); } });
+
+/* ---------------- toast + confetti ---------------- */
+let toastT = null;
+function toast(msg, err){ const el = $("#toast"); el.textContent = msg; el.className = "show" + (err ? " err" : ""); clearTimeout(toastT); toastT = setTimeout(() => el.className = "", 3200); }
+function confetti(){
+  if (reduced()) return;
+  const c = $("#confetti"), x = c.getContext("2d"); c.width = innerWidth; c.height = innerHeight;
+  const cols = ["#9F714F","#C0A88F","#EBE7DC","#6E8B5B","#C08A3E","#B4614A","#E8C9A0"];
+  const P = Array.from({length:140}, () => ({ x:innerWidth/2, y:innerHeight*0.35, vx:(Math.random()-.5)*16, vy:Math.random()*-14-4, r:Math.random()*6+4, c:cols[Math.floor(Math.random()*cols.length)], a:Math.random()*6, s:(Math.random()-.5)*.3 }));
+  let f = 0;
+  (function loop(){
+    x.clearRect(0,0,c.width,c.height);
+    P.forEach(p => { p.vy += .45; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.a += p.s; x.save(); x.translate(p.x,p.y); x.rotate(p.a); x.fillStyle = p.c; x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2); x.restore(); });
+    if (++f < 150) requestAnimationFrame(loop); else x.clearRect(0,0,c.width,c.height);
+  })();
+}
+
+/* ---------------- start ---------------- */
+render();
+refresh();
+</script>
+</body>
+</html>
